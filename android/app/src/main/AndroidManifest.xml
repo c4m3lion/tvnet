@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.threefruits.tvnet">
+          xmlns:tools="http://schemas.android.com/tools" package="com.threefruits.tvnet">
+
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="tvnet"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+           android:usesCleartextTraffic="true"
+           android:label="tvnet"
+           android:name="${applicationName}"
+           android:icon="@mipmap/ic_launcher" tools:targetApi="m">
         <activity
             android:name=".MainActivity"
             android:exported="true"
