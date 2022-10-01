@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:tvnet/pages/home/home_page.dart';
 import 'package:tvnet/pages/login/login_page.dart';
+import 'package:tvnet/pages/video/video_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,12 +14,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TVNet',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Shortcuts(
+      shortcuts: <LogicalKeySet, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+      },
+      child: MaterialApp(
+        title: 'TVNet',
+        theme: ThemeData(),
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => LoginPage(),
+          '/home': (context) => HomePage(),
+          '/video': (context) => VideoPage(),
+        },
       ),
-      home: const LoginPage(),
     );
   }
 }
