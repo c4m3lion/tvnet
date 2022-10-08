@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/pages/home/home_page.dart';
 import 'package:tvnet/pages/login/login_page.dart';
+import 'package:tvnet/pages/setting/setting_page.dart';
 import 'package:tvnet/pages/video/video_page.dart';
+import 'package:tvnet/services/color_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +22,10 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         title: 'TVNet',
-        theme: ThemeData(),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: categoryColor,
+        ),
         initialRoute: '/login',
         routes: {
           '/login': (context) => LoginPage(),

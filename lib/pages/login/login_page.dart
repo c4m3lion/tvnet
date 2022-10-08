@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tvnet/services/my_data.dart';
-import 'package:tvnet/services/my_functions.dart';
-import 'package:tvnet/services/my_network.dart';
+
+import '../../services/my_functions.dart' as func;
+import '../../services/my_globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,42 +23,41 @@ class _LoginPageState extends State<LoginPage> {
   void loginStart({required String login, required String pass}) async {
     isWrong = false;
     if (isLoading || !_formKey.currentState!.validate()) return;
-    MyMessage.showSnack(context: context, text: "Loading your account...");
+    func.showSnack(context, "Loading your account...");
     setState(() {
       isLoading = true;
     });
 
-    String status = await MyNetwork().login(login: login, pass: pass);
-    if (status == "OK") {
-      await MyData.localStorage.setString('login', login);
-      await MyData.localStorage.setString('pass', pass);
+    try {
+      globals.token = await func.login(login: login, password: pass);
+      await globals.localStorage.setString('login', login);
+      await globals.localStorage.setString('pass', pass);
+      if (mounted) {
+        func.showSnack(context, "Loading Channels...");
+      }
+      await func.setChannelsAndCategories();
 
-      MyMessage.showSnack(context: context, text: "Loading Channels...");
-      status = await MyNetwork().getChannels();
-      if (status == "OK") {
-        await MyFunctions().loadLocalData();
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        Navigator.pushNamed(
+      if (mounted) {
+        func.clearSnackBar(context);
+        Navigator.pushReplacementNamed(
           context,
           '/video',
         );
-      } else {
-        MyMessage.showSnack(context: context, text: status);
       }
-    } else {
+    } catch (e) {
+      func.showSnack(context, e.toString());
       setState(() {
         isWrong = true;
       });
       _formKey.currentState!.validate();
-      MyMessage.showSnack(context: context, text: status);
     }
     isLoading = false;
   }
 
   void loadLocalData() async {
-    MyData.localStorage = await SharedPreferences.getInstance();
-    loginInput.text = MyData.localStorage.getString('login') ?? "";
-    passwordInput.text = MyData.localStorage.getString('pass') ?? "";
+    globals.localStorage = await SharedPreferences.getInstance();
+    loginInput.text = globals.localStorage.getString('login') ?? "";
+    passwordInput.text = globals.localStorage.getString('pass') ?? "";
     if (loginInput.text != "" && passwordInput.text != "") {
       loginStart(
         login: loginInput.text,
@@ -88,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Align(
                 alignment: Alignment.center,
                 child: isLoading
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 120,
                         height: 120,
                         child: CircularProgressIndicator(),
@@ -117,8 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: Form(
                       key: _formKey,
                       child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
                           width: 320,
                           child: Card(
                             child: ListView(
