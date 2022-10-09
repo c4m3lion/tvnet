@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -203,6 +202,7 @@ class _VideoPageState extends State<VideoPage> {
 
   Widget bildMainFrame() {
     return Stack(
+      alignment: Alignment.center,
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
