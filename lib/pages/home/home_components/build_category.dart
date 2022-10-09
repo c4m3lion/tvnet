@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +28,7 @@ Widget buildCategories(
           },
           selected: index == globals.currentCategoryId,
           title: Text(
-            globals.categories[index].name,
+            globals.categories[index].name.tr(),
           ),
         ),
       );

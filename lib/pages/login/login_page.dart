@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   void loginStart({required String login, required String pass}) async {
     isWrong = false;
     if (isLoading || !_formKey.currentState!.validate()) return;
-    func.showSnack(context, "Loading your account...");
+    func.showSnack(context, "Loading your account...".tr());
     setState(() {
       isLoading = true;
     });
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       await globals.localStorage.setString('login', login);
       await globals.localStorage.setString('pass', pass);
       if (mounted) {
-        func.showSnack(context, "Loading Channels...");
+        func.showSnack(context, "Loading Channels...".tr());
       }
       await func.setChannelsAndCategories();
 
@@ -107,16 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                 alignment:
                     isPortrait ? Alignment.topCenter : Alignment.centerLeft,
                 child: Shortcuts(
-                  shortcuts: <LogicalKeySet, Intent>{
-                    // LogicalKeySet(LogicalKeyboardKey.arrowLeft):
-                    //     const PreviousFocusIntent(),
-                    // LogicalKeySet(LogicalKeyboardKey.arrowDown):
-                    //     const NextFocusIntent(),
-                    // LogicalKeySet(LogicalKeyboardKey.arrowUp):
-                    //     const PreviousFocusIntent(),
-                    // LogicalKeySet(LogicalKeyboardKey.arrowRight):
-                    //     const NextFocusIntent(),
-                  },
+                  shortcuts: <LogicalKeySet, Intent>{},
                   child: ExcludeFocus(
                     excluding: isLoading,
                     child: Form(
@@ -141,14 +133,14 @@ class _LoginPageState extends State<LoginPage> {
                                     autofocus: true,
                                     focusNode: loginFocus,
                                     controller: loginInput,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       icon: Icon(Icons.person),
-                                      hintText: 'Enter your Login',
-                                      labelText: 'Login...',
+                                      hintText: 'Enter your Login'.tr(),
+                                      labelText: 'Login...'.tr(),
                                     ),
                                     validator: (value) {
                                       if (value!.isEmpty || isWrong) {
-                                        return 'Please enter valid login';
+                                        return 'Please enter valid login'.tr();
                                       }
                                       return null;
                                     },
@@ -158,14 +150,14 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 TextFormField(
                                   controller: passwordInput,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     icon: Icon(Icons.password),
-                                    hintText: 'Enter your password',
-                                    labelText: 'Password...',
+                                    hintText: 'Enter your password'.tr(),
+                                    labelText: 'Password...'.tr(),
                                   ),
                                   validator: (value) {
                                     if (value!.isEmpty || isWrong) {
-                                      return 'Please enter valid password';
+                                      return 'Please enter valid password'.tr();
                                     }
                                     return null;
                                   },
@@ -183,8 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                                   padding: const EdgeInsets.only(
                                       top: 24, left: 24, right: 24),
                                   child: ElevatedButton(
-                                    child: const Text(
-                                      'Submit',
+                                    child: Text(
+                                      'Submit'.tr(),
                                       style: TextStyle(color: Colors.white),
                                     ),
                                     onPressed: () {
