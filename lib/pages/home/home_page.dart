@@ -33,24 +33,47 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return SafeArea(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          switch (orientation) {
-            case Orientation.landscape:
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-              return HomePageLandScape(
-                channels: categoryChannels,
-                loadCategory: loadCategory,
-              );
-            case Orientation.portrait:
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-              return HomePagePortrait(
-                channels: categoryChannels,
-                loadCategory: loadCategory,
-              );
-          }
-        },
+    return WillPopScope(
+      onWillPop: () async {
+        return (await showDialog(
+              context: context,
+              builder: (context) => new AlertDialog(
+                title: new Text('Are you sure?'),
+                content: new Text('Do you want to exit an App'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: new Text('No'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: new Text('Yes'),
+                  ),
+                ],
+              ),
+            )) ??
+            false;
+      },
+      child: SafeArea(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            switch (orientation) {
+              case Orientation.landscape:
+                SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.immersiveSticky);
+                return HomePageLandScape(
+                  channels: categoryChannels,
+                  loadCategory: loadCategory,
+                );
+              case Orientation.portrait:
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                return HomePagePortrait(
+                  channels: categoryChannels,
+                  loadCategory: loadCategory,
+                );
+            }
+          },
+        ),
       ),
     );
   }

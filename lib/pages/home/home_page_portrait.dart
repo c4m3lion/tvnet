@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tvnet/pages/home/home_components/build_category.dart';
 import 'package:tvnet/pages/home/home_components/build_channel.dart';
+import 'package:tvnet/pages/home/setting/setting_page.dart';
 
 import '../../classes/Channel.dart';
 import '../../services/my_globals.dart' as globals;
@@ -25,7 +26,11 @@ class _HomePagePortraitState extends State<HomePagePortrait> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(globals.getCurrentCategory.name),
+        title: Text(
+          globals.selectedPage == 0
+              ? globals.getCurrentCategory.name
+              : "Settings",
+        ),
       ),
       drawer: Drawer(
         width: 200,
@@ -34,10 +39,42 @@ class _HomePagePortraitState extends State<HomePagePortrait> {
           willPop: true,
         ),
       ),
-      body: buildChannels(
-        refreshPage: refreshPage,
-        channels: widget.channels,
+      body: loadPage(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.tv),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: globals.selectedPage,
+        onTap: (index) => {
+          setState(() {
+            globals.selectedPage = index;
+          }),
+        },
       ),
     );
+  }
+
+  Widget loadPage() {
+    switch (globals.selectedPage) {
+      case 0:
+        return buildChannels(
+          refreshPage: refreshPage,
+          channels: widget.channels,
+        );
+      case 1:
+        return SettingPage();
+      default:
+        return buildChannels(
+          refreshPage: refreshPage,
+          channels: widget.channels,
+        );
+    }
   }
 }

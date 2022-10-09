@@ -68,7 +68,6 @@ class _BuildEpgState extends State<BuildEpg> {
                                 globals.epgs[index].start),
                           ),
                         ),
-                        Text("-"),
                         Text(
                           DateFormat('HH:mm').format(
                             DateTime.fromMillisecondsSinceEpoch(

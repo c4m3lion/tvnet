@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/pages/home/home_page.dart';
 import 'package:tvnet/pages/login/login_page.dart';
-import 'package:tvnet/pages/setting/setting_page.dart';
 import 'package:tvnet/pages/video/video_page.dart';
 import 'package:tvnet/services/color_service.dart';
 
@@ -25,6 +24,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: categoryColor,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: buttonColor,
+            ),
+          ),
+          useMaterial3: true,
         ),
         initialRoute: '/login',
         routes: {

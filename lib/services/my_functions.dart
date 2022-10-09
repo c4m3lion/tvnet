@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -70,6 +71,16 @@ Future<void> loadEpgs(Channel channel) async {
   globals.epgs = List<Epg>.from(data["epg"].map((x) => Epg.fromJson(x)))
       .where((epg) => seen.add(epg.start.toString()))
       .toList();
+}
+
+Future<String> loadUrl(Channel channel) async {
+  if (globals.urls[channel.id] == null) {
+    print("Loading form internet");
+    globals.urls[channel.id] = await my_network.getPlayBack(
+        channelId: channel.id, token: globals.token);
+    await globals.localStorage.setString("URLS", jsonEncode(globals.urls));
+  }
+  return globals.urls[channel.id];
 }
 
 List<Channel> loadByCategoryChannels({String? categoryId}) {

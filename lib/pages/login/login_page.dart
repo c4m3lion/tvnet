@@ -92,7 +92,13 @@ class _LoginPageState extends State<LoginPage> {
                         height: 120,
                         child: CircularProgressIndicator(),
                       )
-                    : Image.asset("assets/icons/app_logo-removebg-preview.png"),
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image.asset(
+                          "assets/images/app_logo.png",
+                          width: 200,
+                        ),
+                      ),
               ),
             ),
             Expanded(
@@ -177,7 +183,10 @@ class _LoginPageState extends State<LoginPage> {
                                   padding: const EdgeInsets.only(
                                       top: 24, left: 24, right: 24),
                                   child: ElevatedButton(
-                                    child: const Text('Submit'),
+                                    child: const Text(
+                                      'Submit',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                     onPressed: () {
                                       loginStart(
                                         login: loginInput.text,
