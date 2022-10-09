@@ -1,13 +1,11 @@
 import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/components/build_epg.dart';
 import 'package:tvnet/components/favorite_button.dart';
 import 'package:tvnet/pages/video/video_components/number_overlay.dart';
 import 'package:tvnet/services/my_functions.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../classes/Channel.dart';
 import '../../components/build_aspect_ratio.dart';
@@ -22,8 +20,8 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  VideoPlayerController? videoPlayerController;
-  ChewieController? chewieController;
+  BetterPlayerController? _betterPlayerController;
+  BetterPlayerDataSource? betterPlayerDataSource;
 
   bool isLoading = false;
   bool isControl = false;
@@ -38,35 +36,31 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Future<void> initVideo(String url) async {
-    videoPlayerController?.dispose();
+    _betterPlayerController?.dispose();
     isLoading = true;
+    betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, url,
+        videoFormat: BetterPlayerVideoFormat.hls, liveStream: true);
 
-    videoPlayerController = VideoPlayerController.network(
-      url,
-      formatHint: VideoFormat.hls,
-      httpHeaders: {
-        'oms-client': globals.token,
-      },
-      videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: true,
-      ),
-    );
-    await videoPlayerController!.initialize();
-    loadChewie();
+    loadBetter();
     setState(() {
       isLoading = false;
     });
   }
 
-  void loadChewie() {
-    chewieController?.dispose();
-    chewieController = ChewieController(
-      videoPlayerController: videoPlayerController!,
-      autoPlay: true,
-      isLive: true,
-      aspectRatio: calculateAspect(),
-      looping: true,
-      showControls: false,
+  void loadBetter() async {
+    _betterPlayerController?.dispose();
+    _betterPlayerController = null;
+    _betterPlayerController = BetterPlayerController(
+      BetterPlayerConfiguration(
+        aspectRatio: calculateAspect(),
+        autoPlay: true,
+        allowedScreenSleep: false,
+        controlsConfiguration: BetterPlayerControlsConfiguration(
+          showControls: false,
+        ),
+      ),
+      betterPlayerDataSource: betterPlayerDataSource,
     );
     setState(() {});
   }
@@ -114,8 +108,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void dispose() {
     _videoFocus.dispose();
-    chewieController?.dispose();
-    videoPlayerController?.dispose();
+    _betterPlayerController?.dispose();
     super.dispose();
   }
 
@@ -206,13 +199,13 @@ class _VideoPageState extends State<VideoPage> {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: isLoading || chewieController == null
+          child: isLoading || _betterPlayerController == null
               ? Align(
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(),
                 )
-              : Chewie(
-                  controller: chewieController!,
+              : BetterPlayer(
+                  controller: _betterPlayerController!,
                 ),
         ),
         Align(
@@ -260,7 +253,7 @@ class _VideoPageState extends State<VideoPage> {
                           onPressed: () => {
                             loadAspectRatios(
                               context: context,
-                              onSelected: loadChewie,
+                              onSelected: loadBetter,
                             ),
                           },
                           icon: Icon(Icons.more_vert),
