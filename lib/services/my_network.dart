@@ -43,7 +43,6 @@ Future<Map> getChannels({required String token}) async {
       },
     );
     Map data = jsonDecode(response.body);
-
     if (data.containsKey("error")) {
       throw data['error']['message'];
     } else {

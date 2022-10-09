@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void loginStart({required String login, required String pass}) async {
     isWrong = false;
+    globals.name = login;
     if (isLoading || !_formKey.currentState!.validate()) return;
     func.showSnack(context, "Loading your account...".tr());
     setState(() {

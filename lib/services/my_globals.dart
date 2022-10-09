@@ -18,6 +18,8 @@ String name = "";
 String token = "";
 String macAdress = "";
 
+String aspectRatio = "16/9";
+
 late SharedPreferences localStorage;
 
 late Channel currentChannel;
@@ -39,6 +41,35 @@ void setCurrentCategoryId(int id) {
   localStorage.setString("currentCategoryId", categories[id].id);
 }
 
+void setAspectRatio(String aspect) {
+  aspectRatio = aspect;
+  localStorage.setString("aspectRatio", aspect);
+}
+
+Channel loadNextChannel() {
+  int indx = channels.indexOf(currentChannel);
+  indx++;
+  if (indx >= channels.length) {
+    indx = 0;
+  }
+  return channels.elementAt(indx);
+}
+
+Channel loadPreviousChannel() {
+  int indx = channels.indexOf(currentChannel);
+  indx--;
+  if (indx < 0) {
+    indx = channels.length - 1;
+  }
+  return channels.elementAt(indx);
+}
+
+Channel findChannelByLcn(int lcn) {
+  return channels.firstWhere((element) => element.lcn == lcn, orElse: () {
+    throw ("LCN doesn't exit");
+  });
+}
+
 Category get getCurrentCategory {
   return categories[currentCategoryId];
 }
@@ -54,4 +85,7 @@ void loadCurrents() {
 
   //urls
   urls = jsonDecode(localStorage.getString("URLS") ?? "{}");
+
+  //aspectRatio
+  aspectRatio = localStorage.getString("aspectRatio") ?? "16/9";
 }

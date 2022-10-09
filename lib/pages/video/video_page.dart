@@ -1,12 +1,16 @@
+import 'package:better_player/better_player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/components/build_epg.dart';
 import 'package:tvnet/components/favorite_button.dart';
+import 'package:tvnet/pages/video/video_components/number_overlay.dart';
 import 'package:tvnet/services/my_functions.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../classes/Channel.dart';
+import '../../components/build_aspect_ratio.dart';
 import '../../services/my_globals.dart' as globals;
 
 class VideoPage extends StatefulWidget {
@@ -24,12 +28,19 @@ class _VideoPageState extends State<VideoPage> {
   bool isLoading = false;
   bool isControl = false;
 
+  int currentNumber = 0;
+
   FocusNode _videoFocus = FocusNode();
 
+  double calculateAspect() {
+    var aspects = globals.aspectRatio.split('/');
+    return double.parse(aspects[0]) / double.parse(aspects[1]);
+  }
+
   Future<void> initVideo(String url) async {
-    chewieController?.dispose();
     videoPlayerController?.dispose();
     isLoading = true;
+
     videoPlayerController = VideoPlayerController.network(
       url,
       formatHint: VideoFormat.hls,
@@ -41,17 +52,23 @@ class _VideoPageState extends State<VideoPage> {
       ),
     );
     await videoPlayerController!.initialize();
+    loadChewie();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void loadChewie() {
+    chewieController?.dispose();
     chewieController = ChewieController(
       videoPlayerController: videoPlayerController!,
       autoPlay: true,
       isLive: true,
-      aspectRatio: 16 / 9,
+      aspectRatio: calculateAspect(),
       looping: true,
       showControls: false,
     );
-    setState(() {
-      isLoading = false;
-    });
+    setState(() {});
   }
 
   Future<void> loadChannel() async {
@@ -61,7 +78,32 @@ class _VideoPageState extends State<VideoPage> {
     await initVideo(await loadUrl(globals.currentChannel));
   }
 
+  void channelChanged(Channel channel) async {
+    globals.setCurrentChannelId(channel);
+    await initVideo(await loadUrl(globals.currentChannel));
+  }
+
   void refreshPage() {}
+
+  void numberKeyPressed(int id) async {
+    currentNumber = currentNumber * 10 + id;
+    setState(() {});
+    var temp = currentNumber;
+    await Future.delayed(Duration(seconds: 3));
+    if (currentNumber == temp) {
+      globals.setCurrentCategoryId(0);
+      try {
+        globals.currentChannel = globals.findChannelByLcn(currentNumber);
+      } catch (e) {
+        if (mounted) {
+          showSnack(context, e.toString());
+        }
+      }
+      currentNumber = 0;
+      setState(() {});
+      channelChanged(globals.currentChannel);
+    }
+  }
 
   @override
   void initState() {
@@ -93,22 +135,27 @@ class _VideoPageState extends State<VideoPage> {
         return false;
       },
       child: Focus(
-        autofocus: true,
-        canRequestFocus: !isControl,
+        canRequestFocus: false,
         onKey: (node, event) {
           if (event.runtimeType.toString() == 'RawKeyDownEvent') {
-            if (!isControl &&
-                (event.logicalKey == LogicalKeyboardKey.select ||
-                    event.logicalKey == LogicalKeyboardKey.enter)) {
-              setState(() {
-                isControl = true;
-              });
-              return KeyEventResult.handled;
+            if (!isControl) {
+              if (event.logicalKey == LogicalKeyboardKey.select ||
+                  event.logicalKey == LogicalKeyboardKey.enter) {
+                setState(() {
+                  isControl = true;
+                });
+                return KeyEventResult.handled;
+              }
             }
+            print(event.logicalKey);
+          }
+          if (isNumeric(event.logicalKey.keyLabel) &&
+              event.runtimeType.toString() == 'RawKeyDownEvent') {
+            print(event.logicalKey.keyLabel);
+            numberKeyPressed(int.parse(event.logicalKey.keyLabel));
           }
           return KeyEventResult.ignored;
         },
-        focusNode: _videoFocus,
         child: SafeArea(
           child: Scaffold(
             body: OrientationBuilder(
@@ -160,10 +207,17 @@ class _VideoPageState extends State<VideoPage> {
         AspectRatio(
           aspectRatio: 16 / 9,
           child: isLoading || chewieController == null
-              ? const CircularProgressIndicator()
+              ? Align(
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(),
+                )
               : Chewie(
                   controller: chewieController!,
                 ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: numberOverlay(currentNumber),
         ),
         buildControl(),
       ],
@@ -204,30 +258,9 @@ class _VideoPageState extends State<VideoPage> {
                         IconButton(
                           padding: EdgeInsets.all(16),
                           onPressed: () => {
-                            showModalBottomSheet<void>(
+                            loadAspectRatios(
                               context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  height: 200,
-                                  color: Colors.amber,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        const Text('Modal BottomSheet'),
-                                        ElevatedButton(
-                                          child:
-                                              const Text('Close BottomSheet'),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+                              onSelected: loadChewie,
                             ),
                           },
                           icon: Icon(Icons.more_vert),
@@ -245,15 +278,33 @@ class _VideoPageState extends State<VideoPage> {
                         Expanded(
                           child: Card(
                             child: ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Image.network(
-                                  globals.currentChannel.icon,
-                                  width: 60,
+                              leading: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(globals.currentChannel.lcn.toString()),
+                                    SizedBox(
+                                      width: 60,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: CachedNetworkImage(
+                                          imageUrl: globals.currentChannel.icon,
+                                          placeholder: (context, url) =>
+                                              Icon(Icons.image),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.broken_image),
+                                          width: 60,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               title: Text(globals.currentChannel.name),
-                              subtitle: globals.epgs.length > 0
+                              subtitle: globals.epgs.isNotEmpty
                                   ? Text(globals
                                       .epgs[globals.currentActiveEpgId].title)
                                   : null,
@@ -278,7 +329,22 @@ class _VideoPageState extends State<VideoPage> {
                   )
                 ],
               )
-            : null,
+            : Focus(
+                autofocus: true,
+                focusNode: _videoFocus,
+                onKey: (node, event) {
+                  if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+                    channelChanged(globals.loadNextChannel());
+                    setState(() {});
+                  }
+                  if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                    channelChanged(globals.loadPreviousChannel());
+                    setState(() {});
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Container(),
+              ),
       ),
     );
   }

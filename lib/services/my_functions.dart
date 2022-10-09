@@ -20,9 +20,11 @@ Future<String> login({required String login, required String password}) async {
 Future<void> setChannelsAndCategories() async {
   Map data = await my_network.getChannels(token: globals.token);
   globals.categories =
-      List<Category>.from(data["categories"].map((x) => Category.fromJson(x)));
+      List<Category>.from(data["categories"].map((x) => Category.fromJson(x)))
+        ..sort((a, b) => a.position.compareTo(b.position));
   globals.channels =
-      List<Channel>.from(data["channels"].map((x) => Channel.fromJson(x)));
+      List<Channel>.from(data["channels"].map((x) => Channel.fromJson(x)))
+        ..sort((a, b) => a.position.compareTo(b.position));
   globals.categories.insert(
       0, new Category(id: "favorites", name: "Favorites", position: -1));
   globals.categories.insert(
@@ -96,6 +98,11 @@ List<Channel> loadByCategoryChannels({String? categoryId}) {
       .toList();
 }
 
+void logOut(BuildContext context) {
+  globals.localStorage.clear();
+  Navigator.pushReplacementNamed(context, '/login');
+}
+
 showSnack(context, String text) {
   return ScaffoldMessenger.of(context)
     ..removeCurrentSnackBar()
@@ -127,4 +134,11 @@ Future<String> readMacAdress() async {
     return '02:00:00:00:00:00';
   }
   return text;
+}
+
+bool isNumeric(String s) {
+  if (s == null) {
+    return false;
+  }
+  return double.tryParse(s) != null;
 }
