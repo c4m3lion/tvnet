@@ -166,7 +166,10 @@ class _VideoPageState extends State<VideoPage> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      bildMainFrame(),
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: bildMainFrame(),
+                      ),
                       Card(
                         child: ListTile(
                           leading: Image.network(globals.currentChannel.icon),
@@ -191,7 +194,7 @@ class _VideoPageState extends State<VideoPage> {
                 }
                 SystemChrome.setEnabledSystemUIMode(
                     SystemUiMode.immersiveSticky);
-                return Center(child: bildMainFrame());
+                return SizedBox(width: double.infinity, child: bildMainFrame());
               },
             ),
           ),
@@ -202,15 +205,11 @@ class _VideoPageState extends State<VideoPage> {
 
   Widget bildMainFrame() {
     return Stack(
-      alignment: Alignment.center,
       children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
+        Align(
+          alignment: Alignment.center,
           child: isLoading || chewieController == null
-              ? Align(
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
-                )
+              ? const CircularProgressIndicator()
               : Chewie(
                   controller: chewieController!,
                 ),
@@ -225,6 +224,7 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget buildControl() {
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return GestureDetector(
       onTap: () => {
         setState(
@@ -268,65 +268,71 @@ class _VideoPageState extends State<VideoPage> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Card(
-                            child: ListTile(
-                              leading: SizedBox(
-                                width: 100,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(globals.currentChannel.lcn.toString()),
-                                    SizedBox(
-                                      width: 60,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: CachedNetworkImage(
-                                          imageUrl: globals.currentChannel.icon,
-                                          placeholder: (context, url) =>
-                                              Icon(Icons.image),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.broken_image),
-                                          width: 60,
-                                        ),
+                  !isPortrait
+                      ? Expanded(
+                          flex: 1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Card(
+                                  child: ListTile(
+                                    leading: SizedBox(
+                                      width: 100,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(globals.currentChannel.lcn
+                                              .toString()),
+                                          SizedBox(
+                                            width: 60,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    globals.currentChannel.icon,
+                                                placeholder: (context, url) =>
+                                                    Icon(Icons.image),
+                                                errorWidget: (context, url,
+                                                        error) =>
+                                                    Icon(Icons.broken_image),
+                                                width: 60,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                    title: Text(globals.currentChannel.name),
+                                    subtitle: globals.epgs.isNotEmpty
+                                        ? Text(globals
+                                            .epgs[globals.currentActiveEpgId]
+                                            .title)
+                                        : null,
+                                    trailing: favoriteButton(
+                                      autoFocus: true,
+                                      channel: globals.currentChannel,
+                                      onAdd: () => {
+                                        addFavorite(globals.currentChannel)
+                                            .then((value) => setState(() {})),
+                                      },
+                                      onRemove: () => {
+                                        removeFavorite(globals.currentChannel)
+                                            .then((value) => setState(() {})),
+                                      },
+                                      isArrowWork: true,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              title: Text(globals.currentChannel.name),
-                              subtitle: globals.epgs.isNotEmpty
-                                  ? Text(globals
-                                      .epgs[globals.currentActiveEpgId].title)
-                                  : null,
-                              trailing: favoriteButton(
-                                autoFocus: true,
-                                channel: globals.currentChannel,
-                                onAdd: () => {
-                                  addFavorite(globals.currentChannel)
-                                      .then((value) => setState(() {})),
-                                },
-                                onRemove: () => {
-                                  removeFavorite(globals.currentChannel)
-                                      .then((value) => setState(() {})),
-                                },
-                                isArrowWork: true,
-                              ),
-                            ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  )
+                        )
+                      : Container(),
                 ],
               )
             : Focus(
