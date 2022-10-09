@@ -39,8 +39,11 @@ class _VideoPageState extends State<VideoPage> {
     _betterPlayerController?.dispose();
     isLoading = true;
     betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, url,
-        videoFormat: BetterPlayerVideoFormat.hls, liveStream: true);
+      BetterPlayerDataSourceType.network,
+      url,
+      videoFormat: BetterPlayerVideoFormat.hls,
+      liveStream: true,
+    );
 
     loadBetter();
     setState(() {
@@ -57,7 +60,7 @@ class _VideoPageState extends State<VideoPage> {
         autoPlay: true,
         allowedScreenSleep: false,
         controlsConfiguration: BetterPlayerControlsConfiguration(
-          showControls: false,
+          showControls: true,
         ),
       ),
       betterPlayerDataSource: betterPlayerDataSource,
