@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
+import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/components/build_epg.dart';
 import 'package:tvnet/components/favorite_button.dart';
 import 'package:tvnet/pages/video/video_components/number_overlay.dart';
 import 'package:tvnet/services/my_functions.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../classes/Channel.dart';
 import '../../components/build_aspect_ratio.dart';
@@ -21,8 +20,7 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  VideoPlayerController? videoPlayerController;
-  ChewieController? chewieController;
+  FijkPlayer? player;
 
   bool isLoading = false;
   bool isControl = false;
@@ -37,37 +35,14 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Future<void> initVideo(String url) async {
-    videoPlayerController?.dispose();
+    player?.dispose();
     isLoading = true;
 
-    videoPlayerController = VideoPlayerController.network(
-      url,
-      formatHint: VideoFormat.hls,
-      httpHeaders: {
-        'oms-client': globals.token,
-      },
-      videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: true,
-      ),
-    );
-    await videoPlayerController!.initialize();
-    loadChewie();
+    player = FijkPlayer();
+    player?.setDataSource(url, autoPlay: true);
     setState(() {
       isLoading = false;
     });
-  }
-
-  void loadChewie() {
-    chewieController?.dispose();
-    chewieController = ChewieController(
-      videoPlayerController: videoPlayerController!,
-      autoPlay: true,
-      isLive: true,
-      aspectRatio: calculateAspect(),
-      looping: true,
-      showControls: false,
-    );
-    setState(() {});
   }
 
   Future<void> loadChannel() async {
@@ -113,8 +88,8 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void dispose() {
     _videoFocus.dispose();
-    chewieController?.dispose();
-    videoPlayerController?.dispose();
+    player?.release();
+    player?.dispose();
     super.dispose();
   }
 
@@ -208,10 +183,15 @@ class _VideoPageState extends State<VideoPage> {
       children: [
         Align(
           alignment: Alignment.center,
-          child: isLoading || chewieController == null
+          child: isLoading || player == null
               ? const CircularProgressIndicator()
-              : Chewie(
-                  controller: chewieController!,
+              : AspectRatio(
+                  aspectRatio: calculateAspect(),
+                  child: FijkView(
+                    player: player!,
+                    fit: FijkFit.fill,
+                    fsFit: FijkFit.fill,
+                  ),
                 ),
         ),
         Align(
@@ -260,7 +240,7 @@ class _VideoPageState extends State<VideoPage> {
                           onPressed: () => {
                             loadAspectRatios(
                               context: context,
-                              onSelected: loadChewie,
+                              onSelected: loadChannel,
                             ),
                           },
                           icon: Icon(Icons.more_vert),
