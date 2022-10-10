@@ -2,6 +2,7 @@ library globals;
 
 import 'dart:convert';
 
+import 'package:fijkplayer/fijkplayer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tvnet/services/my_functions.dart';
 
@@ -28,6 +29,8 @@ int currentCategoryId = 0;
 int currentActiveEpgId = 0;
 
 int selectedPage = 0;
+
+FijkPlayer player = FijkPlayer();
 
 void setCurrentChannelId(Channel id) {
   epgs.clear();

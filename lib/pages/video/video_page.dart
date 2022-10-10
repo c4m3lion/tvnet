@@ -20,8 +20,6 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  FijkPlayer? player;
-
   bool isLoading = false;
   bool isControl = false;
 
@@ -35,11 +33,11 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Future<void> initVideo(String url) async {
-    player?.dispose();
+    globals.player.release();
+    globals.player = FijkPlayer();
     isLoading = true;
 
-    player = FijkPlayer();
-    player?.setDataSource(url, autoPlay: true);
+    globals.player.setDataSource(url, autoPlay: true);
     setState(() {
       isLoading = false;
     });
@@ -88,8 +86,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void dispose() {
     _videoFocus.dispose();
-    player?.release();
-    player?.dispose();
+    globals.player.release();
     super.dispose();
   }
 
@@ -183,12 +180,12 @@ class _VideoPageState extends State<VideoPage> {
       children: [
         Align(
           alignment: Alignment.center,
-          child: isLoading || player == null
+          child: isLoading
               ? const CircularProgressIndicator()
               : AspectRatio(
                   aspectRatio: calculateAspect(),
                   child: FijkView(
-                    player: player!,
+                    player: globals.player!,
                     fit: FijkFit.fill,
                     fsFit: FijkFit.fill,
                   ),
