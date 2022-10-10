@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/components/favorite_button.dart';
+import 'package:tvnet/pages/video/vlc_player_page.dart';
 import 'package:tvnet/services/my_functions.dart';
 
 import '../../../classes/Channel.dart';
-import '../../video/video_page.dart';
 
 Widget buildChannels(
     {required final Function() refreshPage,
@@ -37,7 +37,7 @@ Widget buildChannels(
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => VideoPage(channel: channels[index]),
+                builder: (context) => VlcPlayerPage(channel: channels[index]),
               ),
             );
           },

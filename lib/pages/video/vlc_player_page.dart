@@ -1,88 +1,61 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tvnet/components/build_epg.dart';
-import 'package:tvnet/components/favorite_button.dart';
-import 'package:tvnet/pages/video/video_components/number_overlay.dart';
-import 'package:tvnet/services/my_functions.dart';
-import 'package:video_player/video_player.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:tvnet/pages/video/video_player_service.dart';
 
 import '../../classes/Channel.dart';
 import '../../components/build_aspect_ratio.dart';
+import '../../components/build_epg.dart';
+import '../../components/favorite_button.dart';
+import '../../services/my_functions.dart' as func;
 import '../../services/my_globals.dart' as globals;
+import 'video_components/number_overlay.dart';
 
-class VideoPage extends StatefulWidget {
+class VlcPlayerPage extends StatefulWidget {
   Channel? channel;
-  VideoPage({Key? key, this.channel}) : super(key: key);
+  VlcPlayerPage({Key? key, this.channel}) : super(key: key);
 
   @override
-  State<VideoPage> createState() => _VideoPageState();
+  State<VlcPlayerPage> createState() => _VlcPlayerPageState();
 }
 
-class _VideoPageState extends State<VideoPage> {
-  VideoPlayerController? videoPlayerController;
-  ChewieController? chewieController;
+class _VlcPlayerPageState extends State<VlcPlayerPage> {
+  VlcPlayerController? controller;
+  final double playerWidth = 640;
+  final double playerHeight = 360;
 
-  bool isLoading = false;
   bool isControl = false;
 
   int currentNumber = 0;
 
-  FocusNode _videoFocus = FocusNode();
-
-  double calculateAspect() {
-    var aspects = globals.aspectRatio.split('/');
-    return double.parse(aspects[0]) / double.parse(aspects[1]);
-  }
+  final FocusNode _videoFocus = FocusNode();
 
   Future<void> initVideo(String url) async {
-    videoPlayerController?.dispose();
-    isLoading = true;
+    await stopPlayer();
 
-    videoPlayerController = VideoPlayerController.network(
-      url,
-      formatHint: VideoFormat.hls,
-      httpHeaders: {
-        'oms-client': globals.token,
-      },
-      videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: true,
-      ),
-    );
-    await videoPlayerController!.initialize();
-    loadChewie();
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  void loadChewie() {
-    chewieController?.dispose();
-    chewieController = ChewieController(
-      videoPlayerController: videoPlayerController!,
-      autoPlay: true,
-      isLive: true,
-      aspectRatio: calculateAspect(),
-      looping: true,
-      showControls: false,
-    );
+    controller =
+        VlcPlayerController.network(url, hwAcc: HwAcc.disabled, autoPlay: true);
+    //await videoPlayerController!.initialize();
+    //loadChewie();
     setState(() {});
   }
 
   Future<void> loadChannel() async {
+    setState(() {});
     if (widget.channel != null) {
       globals.setCurrentChannelId(widget.channel!);
     }
-    await initVideo(await loadUrl(globals.currentChannel));
+    await initVideo(await func.loadUrl(globals.currentChannel));
+    setState(() {});
   }
 
   void channelChanged(Channel channel) async {
     globals.setCurrentChannelId(channel);
-    await initVideo(await loadUrl(globals.currentChannel));
+    var url = await func.loadUrl(globals.currentChannel);
+    initVideo(url);
+    setState(() {});
   }
-
-  void refreshPage() {}
 
   void numberKeyPressed(int id) async {
     currentNumber = currentNumber * 10 + id;
@@ -95,13 +68,25 @@ class _VideoPageState extends State<VideoPage> {
         globals.currentChannel = globals.findChannelByLcn(currentNumber);
       } catch (e) {
         if (mounted) {
-          showSnack(context, e.toString());
+          func.showSnack(context, e.toString());
         }
       }
       currentNumber = 0;
       setState(() {});
       channelChanged(globals.currentChannel);
     }
+  }
+
+  void aspectChange() {
+    setState(() {});
+  }
+
+  Future<void> stopPlayer() async {
+    if (controller != null) {
+      await controller!.stop();
+    }
+    await controller?.stopRendererScanning();
+    await controller?.dispose();
   }
 
   @override
@@ -111,11 +96,13 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   @override
-  void dispose() {
-    _videoFocus.dispose();
-    chewieController?.dispose();
-    videoPlayerController?.dispose();
+  void dispose() async {
     super.dispose();
+    if (controller != null) {
+      await controller!.stop();
+    }
+    await controller?.stopRendererScanning();
+    await controller?.dispose();
   }
 
   @override
@@ -129,6 +116,9 @@ class _VideoPageState extends State<VideoPage> {
           await Future.delayed(Duration(seconds: 1));
           FocusScope.of(context).requestFocus(_videoFocus);
         } else {
+          if (controller != null) {
+            await controller!.stop();
+          }
           Navigator.pushReplacementNamed(context, "/home");
         }
         return false;
@@ -148,7 +138,7 @@ class _VideoPageState extends State<VideoPage> {
             }
             print(event.logicalKey);
           }
-          if (isNumeric(event.logicalKey.keyLabel) &&
+          if (func.isNumeric(event.logicalKey.keyLabel) &&
               event.runtimeType.toString() == 'RawKeyDownEvent') {
             print(event.logicalKey.keyLabel);
             numberKeyPressed(int.parse(event.logicalKey.keyLabel));
@@ -177,11 +167,13 @@ class _VideoPageState extends State<VideoPage> {
                           trailing: favoriteButton(
                             channel: globals.currentChannel,
                             onAdd: () => {
-                              addFavorite(globals.currentChannel)
+                              func
+                                  .addFavorite(globals.currentChannel)
                                   .then((value) => setState(() {})),
                             },
                             onRemove: () => {
-                              removeFavorite(globals.currentChannel)
+                              func
+                                  .removeFavorite(globals.currentChannel)
                                   .then((value) => setState(() {})),
                             },
                           ),
@@ -208,10 +200,14 @@ class _VideoPageState extends State<VideoPage> {
       children: [
         Align(
           alignment: Alignment.center,
-          child: isLoading || chewieController == null
-              ? const CircularProgressIndicator()
-              : Chewie(
-                  controller: chewieController!,
+          child: controller == null
+              ? CircularProgressIndicator()
+              : VlcPlayer(
+                  aspectRatio: calculateAspect(),
+                  controller: controller!,
+                  placeholder: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
         ),
         Align(
@@ -260,7 +256,7 @@ class _VideoPageState extends State<VideoPage> {
                           onPressed: () => {
                             loadAspectRatios(
                               context: context,
-                              onSelected: loadChewie,
+                              onSelected: aspectChange,
                             ),
                           },
                           icon: Icon(Icons.more_vert),
@@ -317,11 +313,14 @@ class _VideoPageState extends State<VideoPage> {
                                       autoFocus: true,
                                       channel: globals.currentChannel,
                                       onAdd: () => {
-                                        addFavorite(globals.currentChannel)
+                                        func
+                                            .addFavorite(globals.currentChannel)
                                             .then((value) => setState(() {})),
                                       },
                                       onRemove: () => {
-                                        removeFavorite(globals.currentChannel)
+                                        func
+                                            .removeFavorite(
+                                                globals.currentChannel)
                                             .then((value) => setState(() {})),
                                       },
                                       isArrowWork: true,

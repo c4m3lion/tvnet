@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/pages/home/home_page.dart';
 import 'package:tvnet/pages/login/login_page.dart';
-import 'package:tvnet/pages/video/video_page.dart';
 import 'package:tvnet/services/color_service.dart';
 import 'package:tvnet/translations/codegen_loader.g.dart';
 
@@ -32,8 +31,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shortcuts(
-      shortcuts: <LogicalKeySet, Intent>{
-        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+      shortcuts: {
+        SingleActivator(LogicalKeyboardKey.select): const ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.keyH): const ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.enter): const ActivateIntent(),
       },
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         locale: context.locale,
         title: 'TVNet',
         theme: ThemeData(
+          visualDensity: VisualDensity.adaptivePlatformDensity,
           brightness: Brightness.dark,
           scaffoldBackgroundColor: categoryColor,
           elevatedButtonTheme: ElevatedButtonThemeData(
@@ -54,7 +56,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/login': (context) => LoginPage(),
           '/home': (context) => HomePage(),
-          '/video': (context) => VideoPage(),
         },
       ),
     );

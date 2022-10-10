@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tvnet/pages/video/vlc_player_page.dart';
 
 import '../../services/my_functions.dart' as func;
 import '../../services/my_globals.dart' as globals;
@@ -41,10 +42,8 @@ class _LoginPageState extends State<LoginPage> {
 
       if (mounted) {
         func.clearSnackBar(context);
-        Navigator.pushReplacementNamed(
-          context,
-          '/video',
-        );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => VlcPlayerPage()));
       }
     } catch (e) {
       func.showSnack(context, e.toString());

@@ -29,6 +29,8 @@ int currentActiveEpgId = 0;
 
 int selectedPage = 0;
 
+VideoTypes videoType = VideoTypes.vlcPlayer;
+
 void setCurrentChannelId(Channel id) {
   epgs.clear();
   loadEpgs(id);
@@ -88,4 +90,11 @@ void loadCurrents() {
 
   //aspectRatio
   aspectRatio = localStorage.getString("aspectRatio") ?? "16/9";
+}
+
+enum VideoTypes {
+  videoPlayer,
+  vlcPlayer,
+  betterPlayer,
+  fijsPlayer,
 }

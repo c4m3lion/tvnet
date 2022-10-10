@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:tvnet/components/build_epg.dart';
 import 'package:tvnet/pages/home/home_components/build_category.dart';
 import 'package:tvnet/pages/home/setting/setting_page.dart';
+import 'package:tvnet/pages/video/vlc_player_page.dart';
 import 'package:tvnet/services/color_service.dart';
 
 import '../../classes/Channel.dart';
 import '../../services/my_globals.dart' as globals;
-import '../video/video_page.dart';
 import 'home_components/build_channel.dart';
 
 class HomePageLandScape extends StatefulWidget {
@@ -122,7 +122,7 @@ class _HomePageLandScapeState extends State<HomePageLandScape>
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VideoPage(),
+                  builder: (context) => VlcPlayerPage(),
                 ),
               ),
             },
