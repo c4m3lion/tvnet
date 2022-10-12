@@ -27,17 +27,21 @@ class _VideoPageState extends State<VideoPage> {
 
   FocusNode _videoFocus = FocusNode();
 
+  FijkPlayer? player;
+
   double calculateAspect() {
     var aspects = globals.aspectRatio.split('/');
     return double.parse(aspects[0]) / double.parse(aspects[1]);
   }
 
   Future<void> initVideo(String url) async {
-    globals.player.release();
-    globals.player = FijkPlayer();
     isLoading = true;
+    setState(() {});
 
-    globals.player.setDataSource(url, autoPlay: true);
+    await player?.release();
+    player?.dispose();
+    player = FijkPlayer();
+    player?.setDataSource(url, autoPlay: true);
     setState(() {
       isLoading = false;
     });
@@ -84,9 +88,10 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     _videoFocus.dispose();
-    globals.player.release();
+    await player?.release();
+    player?.dispose();
     super.dispose();
   }
 
@@ -180,14 +185,15 @@ class _VideoPageState extends State<VideoPage> {
       children: [
         Align(
           alignment: Alignment.center,
-          child: isLoading
+          child: isLoading || player == null
               ? const CircularProgressIndicator()
               : AspectRatio(
                   aspectRatio: calculateAspect(),
                   child: FijkView(
-                    player: globals.player!,
+                    player: player!,
                     fit: FijkFit.fill,
                     fsFit: FijkFit.fill,
+                    fs: true,
                   ),
                 ),
         ),
