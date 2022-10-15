@@ -33,7 +33,7 @@
   "Remove from favorites": "Sevimlilərdən silin",
   "Add to favorites": "Sevimlilərə əlavə et",
   "Aspect ratio": "Aspekt nisbəti",
-  "Bitrate": "Bitrate",
+  "Bitrate": "Bitreyt",
   "Resolution": "Görüntü imkanı",
   "Choose your device": "Cihazınızı seçin",
   "Version": "Versiya",
@@ -43,5 +43,12 @@
   "Searching for user": "İstifadəçi axtarılır...",
   "No EPG": "EPG yoxdur",
   "Video settings": "Video parametrləri",
-  "Submit": "tes"
+  "Submit": "Təsdiqlə",
+  "Are you sure?": "Əminsiniz?",
+  "Do you really want to log out?": "Həqiqətən çıxmaq istəyirsiniz?",
+  "Yes": "Bəli",
+  "No": "Xeyr",
+  "Enter your login": "Girişinizi daxil edin",
+  "All Channels": "Bütün Kanallar",
+  "Home": "Ana Səhifə"
 }

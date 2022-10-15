@@ -43,5 +43,12 @@
   "Searching for user": "Пошук користувача...",
   "No EPG": "Немає EPG",
   "Video settings": "Налаштування відео",
-  "Submit": "tes"
+  "Submit": "Подавати",
+  "Are you sure?": "Ти впевнений?",
+  "Do you really want to log out?": "Ви дійсно хочете вийти?",
+  "Yes": "Так",
+  "No": "Ні",
+  "Enter your login": "Введіть свій логін",
+  "All Channels": "Усі канали",
+  "Home": "Головне меню"
 }
