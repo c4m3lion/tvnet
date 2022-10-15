@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text('No'),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
+                    onPressed: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
                     child: Text('Yes'),
                   ),
                 ],

@@ -59,7 +59,14 @@ class CodegenLoader extends AssetLoader{
   "Searching for user": "...البحث عن مستخدم",
   "No EPG": "لا يوجد دليل البرامج الإلكتروني",
   "Video settings": "اعدادات الفيديو",
-  "Submit": "tes"
+  "Submit": "تخدم",
+  "Are you sure?": "هل أنت واثق؟",
+  "Do you really want to log out?": "هل تريد حقًا تسجيل الخروج؟",
+  "Yes": "نعم",
+  "No": "رقم",
+  "Enter your login": "أدخل تسجيل الدخول الخاص بك",
+  "All Channels": "جميع القنوات",
+  "Home": "القائمة الرئيسية"
 };
 static const Map<String,dynamic> az = {
   "hello_world": "Salam dünya",
@@ -96,7 +103,7 @@ static const Map<String,dynamic> az = {
   "Remove from favorites": "Sevimlilərdən silin",
   "Add to favorites": "Sevimlilərə əlavə et",
   "Aspect ratio": "Aspekt nisbəti",
-  "Bitrate": "Bitrate",
+  "Bitrate": "Bitreyt",
   "Resolution": "Görüntü imkanı",
   "Choose your device": "Cihazınızı seçin",
   "Version": "Versiya",
@@ -106,7 +113,14 @@ static const Map<String,dynamic> az = {
   "Searching for user": "İstifadəçi axtarılır...",
   "No EPG": "EPG yoxdur",
   "Video settings": "Video parametrləri",
-  "Submit": "tes"
+  "Submit": "Təsdiqlə",
+  "Are you sure?": "Əminsiniz?",
+  "Do you really want to log out?": "Həqiqətən çıxmaq istəyirsiniz?",
+  "Yes": "Bəli",
+  "No": "Xeyr",
+  "Enter your login": "Girişinizi daxil edin",
+  "All Channels": "Bütün Kanallar",
+  "Home": "Ana Səhifə"
 };
 static const Map<String,dynamic> en = {
   "hello_world": "Hello world",
@@ -153,7 +167,14 @@ static const Map<String,dynamic> en = {
   "Searching for user": "Searching for user...",
   "No EPG": "No EPG",
   "Video settings": "Video settings",
-  "Submit": "Submit"
+  "Submit": "Submit",
+  "Are you sure?": "Are you sure?",
+  "Do you really want to log out?": "Do you really want to log out?",
+  "Yes": "Yes",
+  "No": "No",
+  "Enter your login": "Enter your Login",
+  "All Channels": "All Channels",
+  "Home": "Home"
 };
 static const Map<String,dynamic> ru = {
   "Account": "Аккаунт",
@@ -200,7 +221,14 @@ static const Map<String,dynamic> ru = {
   "Searching for user": "Поиск пользователя...",
   "No EPG": "Нет EPG",
   "Video settings": "Настройки видео",
-  "Submit": "tes"
+  "Submit": "Подавать",
+  "Are you sure?": "Ты уверен?",
+  "Do you really want to log out?": "Вы действительно хотите выйти?",
+  "Yes": "Да",
+  "No": "Нет",
+  "Enter your login": "Введите свой логин",
+  "All Channels": "Все каналы",
+  "Home": "Главное меню"
 };
 static const Map<String,dynamic> uk = {
   "Account": "Рахунок",
@@ -247,7 +275,14 @@ static const Map<String,dynamic> uk = {
   "Searching for user": "Пошук користувача...",
   "No EPG": "Немає EPG",
   "Video settings": "Налаштування відео",
-  "Submit": "tes"
+  "Submit": "Подавати",
+  "Are you sure?": "Ти впевнений?",
+  "Do you really want to log out?": "Ви дійсно хочете вийти?",
+  "Yes": "Так",
+  "No": "Ні",
+  "Enter your login": "Введіть свій логін",
+  "All Channels": "Усі канали",
+  "Home": "Головне меню"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "az": az, "en": en, "ru": ru, "uk": uk};
 }

@@ -137,12 +137,10 @@ packages:
   fijkplayer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: develop
-      resolved-ref: e569e9ea7830a370d578709358e5ad2ece05992f
-      url: "https://github.com/befovy/fijkplayer.git"
-    source: git
-    version: "0.8.8"
+      name: fijkplayer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.1"
   file:
     dependency: transitive
     description:
