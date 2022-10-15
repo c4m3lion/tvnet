@@ -43,5 +43,12 @@
   "Searching for user": "...البحث عن مستخدم",
   "No EPG": "لا يوجد دليل البرامج الإلكتروني",
   "Video settings": "اعدادات الفيديو",
-  "Submit": "tes"
+  "Submit": "تخدم",
+  "Are you sure?": "هل أنت واثق؟",
+  "Do you really want to log out?": "هل تريد حقًا تسجيل الخروج؟",
+  "Yes": "نعم",
+  "No": "رقم",
+  "Enter your login": "أدخل تسجيل الدخول الخاص بك",
+  "All Channels": "جميع القنوات",
+  "Home": "القائمة الرئيسية"
 }

@@ -43,5 +43,12 @@
   "Searching for user": "Searching for user...",
   "No EPG": "No EPG",
   "Video settings": "Video settings",
-  "Submit": "Submit"
+  "Submit": "Submit",
+  "Are you sure?": "Are you sure?",
+  "Do you really want to log out?": "Do you really want to log out?",
+  "Yes": "Yes",
+  "No": "No",
+  "Enter your login": "Enter your Login",
+  "All Channels": "All Channels",
+  "Home": "Home"
 }
