@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: Image.asset(
-                          "assets/images/app_logo.png",
+                          "assets/icons/app_logo.png",
                           width: 200,
                         ),
                       ),
@@ -188,6 +188,27 @@ class _LoginPageState extends State<LoginPage> {
                                     },
                                   ),
                                 ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/facebook_icon.png",
+                                        width: 26,
+                                      ),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Image.asset(
+                                        "assets/icons/telephone.png",
+                                        width: 28,
+                                      ),
+                                      Text("012952"),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),

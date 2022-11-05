@@ -148,16 +148,12 @@ class _HomePageLandScapeState extends State<HomePageLandScape>
           ),
           destinations: const [
             NavigationRailDestination(
-              icon: ImageIcon(
-                AssetImage("assets/images/channels-icon.png"),
-              ),
+              icon: Icon(Icons.tv),
               selectedIcon: Icon(Icons.tv),
               label: Text('First'),
             ),
             NavigationRailDestination(
-              icon: ImageIcon(
-                AssetImage("assets/images/settings-icon.png"),
-              ),
+              icon: Icon(Icons.settings),
               selectedIcon: Icon(Icons.settings),
               label: Text('Second'),
             ),
