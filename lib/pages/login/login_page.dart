@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: Image.asset(
-                          "assets/icons/app_logo.png",
+                          "assets/icons/1024.png",
                           width: 200,
                         ),
                       ),
@@ -205,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                                         "assets/icons/telephone.png",
                                         width: 28,
                                       ),
-                                      Text("012952"),
+                                      Text("012345"),
                                     ],
                                   ),
                                 )
