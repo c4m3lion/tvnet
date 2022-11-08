@@ -137,21 +137,23 @@ class _VideoPageState extends State<VideoPage> {
         canRequestFocus: false,
         onKey: (node, event) {
           if (event.runtimeType.toString() == 'RawKeyDownEvent') {
-            if (!isControl) {
-              if (event.logicalKey == LogicalKeyboardKey.select ||
-                  event.logicalKey == LogicalKeyboardKey.enter) {
-                setState(() {
-                  isControl = true;
-                });
-                return KeyEventResult.handled;
-              }
+            if (event.logicalKey == LogicalKeyboardKey.info ||
+                event.logicalKey == LogicalKeyboardKey.keyI) {
+              setState(() {
+                isControl = !isControl;
+              });
+              return KeyEventResult.handled;
             }
-            print(event.logicalKey);
           }
           if (isNumeric(event.logicalKey.keyLabel) &&
               event.runtimeType.toString() == 'RawKeyDownEvent') {
-            print(event.logicalKey.keyLabel);
             numberKeyPressed(int.parse(event.logicalKey.keyLabel));
+          }
+          if ((event.logicalKey == LogicalKeyboardKey.select ||
+                  event.logicalKey == LogicalKeyboardKey.enter) &&
+              !isControl) {
+            Navigator.pushReplacementNamed(context, "/home");
+            return KeyEventResult.handled;
           }
           return KeyEventResult.ignored;
         },

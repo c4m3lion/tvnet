@@ -34,14 +34,12 @@ class MyApp extends StatelessWidget {
     return Shortcuts(
       shortcuts: {
         SingleActivator(LogicalKeyboardKey.select): const ActivateIntent(),
-        SingleActivator(LogicalKeyboardKey.keyH): const ActivateIntent(),
         SingleActivator(LogicalKeyboardKey.enter): const ActivateIntent(),
       },
       child: MaterialApp(
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
-        title: 'TVNet',
         theme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: categoryColor,
