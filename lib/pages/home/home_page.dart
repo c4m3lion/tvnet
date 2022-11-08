@@ -41,13 +41,29 @@ class _HomePageState extends State<HomePage> {
                 title: new Text('Are you sure?'),
                 content: new Text('Do you want to exit an App'),
                 actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: new Text('No'),
+                  Shortcuts(
+                    shortcuts: {
+                      SingleActivator(LogicalKeyboardKey.select):
+                          const ActivateIntent(),
+                      SingleActivator(LogicalKeyboardKey.enter):
+                          const ActivateIntent(),
+                    },
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: new Text('No'),
+                    ),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: new Text('Yes'),
+                  Shortcuts(
+                    shortcuts: {
+                      SingleActivator(LogicalKeyboardKey.select):
+                          const ActivateIntent(),
+                      SingleActivator(LogicalKeyboardKey.enter):
+                          const ActivateIntent(),
+                    },
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: new Text('Yes'),
+                    ),
                   ),
                 ],
               ),
