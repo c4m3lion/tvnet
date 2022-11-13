@@ -342,11 +342,11 @@ class _VideoPageState extends State<VideoPage> {
                 focusNode: _videoFocus,
                 onKey: (node, event) {
                   if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-                    channelChanged(globals.loadNextChannel());
+                    channelChanged(globals.loadPreviousChannel());
                     setState(() {});
                   }
                   if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-                    channelChanged(globals.loadPreviousChannel());
+                    channelChanged(globals.loadNextChannel());
                     setState(() {});
                   }
                   return KeyEventResult.ignored;

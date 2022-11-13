@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
       onWillPop: () async {
         return (await showDialog(
               context: context,
-              builder: (context) => new AlertDialog(
+              builder: (context) => AlertDialog(
                 title: new Text('Are you sure?'),
                 content: new Text('Do you want to exit an App'),
                 actions: <Widget>[
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                           const ActivateIntent(),
                     },
                     child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
+                      onPressed: () => SystemNavigator.pop(),
                       child: new Text('Yes'),
                     ),
                   ),
