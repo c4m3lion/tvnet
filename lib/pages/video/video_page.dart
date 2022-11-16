@@ -26,6 +26,7 @@ class _VideoPageState extends State<VideoPage> {
 
   bool isLoading = false;
   bool isControl = false;
+  bool isFirstTime = true;
 
   int currentNumber = 0;
 
@@ -107,6 +108,9 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     loadChannel();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isFirstTime = false;
+    });
     super.initState();
   }
 
@@ -151,7 +155,8 @@ class _VideoPageState extends State<VideoPage> {
           }
           if ((event.logicalKey == LogicalKeyboardKey.select ||
                   event.logicalKey == LogicalKeyboardKey.enter) &&
-              !isControl) {
+              !isControl &&
+              !isFirstTime) {
             Navigator.pushReplacementNamed(context, "/home");
             return KeyEventResult.handled;
           }

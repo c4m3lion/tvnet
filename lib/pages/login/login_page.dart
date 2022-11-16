@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
+  static final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool isWrong = false;
   TextEditingController loginInput = TextEditingController();
@@ -71,6 +71,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     loadLocalData();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      loginFocus.requestFocus();
+    });
     super.initState();
   }
 
@@ -108,109 +111,97 @@ class _LoginPageState extends State<LoginPage> {
               child: Align(
                 alignment:
                     isPortrait ? Alignment.topCenter : Alignment.centerLeft,
-                child: Shortcuts(
-                  shortcuts: <LogicalKeySet, Intent>{},
-                  child: ExcludeFocus(
-                    excluding: isLoading,
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SizedBox(
-                          width: 320,
-                          child: Card(
-                            child: ListView(
-                              padding: EdgeInsets.all(8),
-                              shrinkWrap: true,
-                              children: [
-                                Focus(
-                                  onKey: (node, event) {
-                                    if (event.isKeyPressed(
-                                        LogicalKeyboardKey.arrowDown)) {}
-                                    return KeyEventResult.ignored;
-                                  },
-                                  canRequestFocus: false,
-                                  child: TextFormField(
-                                    autofocus: true,
-                                    focusNode: loginFocus,
-                                    controller: loginInput,
-                                    decoration: InputDecoration(
-                                      icon: Icon(Icons.person),
-                                      hintText: 'Enter your Login'.tr(),
-                                      labelText: 'Login...'.tr(),
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty || isWrong) {
-                                        return 'Please enter valid login'.tr();
-                                      }
-                                      return null;
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                  ),
+                child: ExcludeFocus(
+                  excluding: isLoading,
+                  child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: 320,
+                        child: Card(
+                          child: ListView(
+                            padding: EdgeInsets.all(8),
+                            shrinkWrap: true,
+                            children: [
+                              TextFormField(
+                                focusNode: loginFocus,
+                                controller: loginInput,
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.person),
+                                  hintText: 'Enter your Login'.tr(),
+                                  labelText: 'Login...'.tr(),
                                 ),
-                                TextFormField(
-                                  controller: passwordInput,
-                                  decoration: InputDecoration(
-                                    icon: Icon(Icons.password),
-                                    hintText: 'Enter your password'.tr(),
-                                    labelText: 'Password...'.tr(),
+                                validator: (value) {
+                                  if (value!.isEmpty || isWrong) {
+                                    return 'Please enter valid login'.tr();
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              TextFormField(
+                                controller: passwordInput,
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.password),
+                                  hintText: 'Enter your password'.tr(),
+                                  labelText: 'Password...'.tr(),
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty || isWrong) {
+                                    return 'Please enter valid password'.tr();
+                                  }
+                                  return null;
+                                },
+                                obscureText: true,
+                                keyboardType: TextInputType.number,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: (value) => {
+                                  loginStart(
+                                    login: loginInput.text,
+                                    pass: passwordInput.text,
                                   ),
-                                  validator: (value) {
-                                    if (value!.isEmpty || isWrong) {
-                                      return 'Please enter valid password'.tr();
-                                    }
-                                    return null;
-                                  },
-                                  obscureText: true,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.done,
-                                  onFieldSubmitted: (value) => {
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 24, left: 24, right: 24),
+                                child: ElevatedButton(
+                                  child: Text(
+                                    'Submit'.tr(),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () {
                                     loginStart(
                                       login: loginInput.text,
                                       pass: passwordInput.text,
-                                    ),
+                                    );
                                   },
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 24, left: 24, right: 24),
-                                  child: ElevatedButton(
-                                    child: Text(
-                                      'Submit'.tr(),
-                                      style: TextStyle(color: Colors.white),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/facebook_icon.png",
+                                      width: 26,
                                     ),
-                                    onPressed: () {
-                                      loginStart(
-                                        login: loginInput.text,
-                                        pass: passwordInput.text,
-                                      );
-                                    },
-                                  ),
+                                    SizedBox(
+                                      width: 16,
+                                    ),
+                                    Image.asset(
+                                      "assets/icons/telephone.png",
+                                      width: 28,
+                                    ),
+                                    Text("012952"),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 16),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Image.asset(
-                                        "assets/icons/facebook_icon.png",
-                                        width: 26,
-                                      ),
-                                      SizedBox(
-                                        width: 16,
-                                      ),
-                                      Image.asset(
-                                        "assets/icons/telephone.png",
-                                        width: 28,
-                                      ),
-                                      Text("012952"),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                              )
+                            ],
                           ),
                         ),
                       ),
