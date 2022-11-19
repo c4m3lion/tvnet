@@ -71,6 +71,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     loadLocalData();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      loginFocus.requestFocus();
+    });
     super.initState();
   }
 
