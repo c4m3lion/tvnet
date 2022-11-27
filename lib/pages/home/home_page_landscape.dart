@@ -13,8 +13,12 @@ import 'home_components/build_channel.dart';
 class HomePageLandScape extends StatefulWidget {
   List<Channel> channels;
   void Function(int index) loadCategory;
+  int scrollPosition;
   HomePageLandScape(
-      {Key? key, required this.channels, required this.loadCategory})
+      {Key? key,
+      required this.channels,
+      required this.loadCategory,
+      required this.scrollPosition})
       : super(key: key);
 
   @override

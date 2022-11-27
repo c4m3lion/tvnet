@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:tvnet/components/confirmation_component.dart';
 import 'package:tvnet/pages/home/home_page_landscape.dart';
 import 'package:tvnet/pages/home/home_page_portrait.dart';
 
@@ -16,18 +18,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late List<Channel> categoryChannels;
+  int initialScrollChannel = 0;
 
   void loadCategory(int index) {
-    globals.setCurrentCategoryId(index);
+    globals.setCurrentTempCategoryId(index);
     setState(() {
-      categoryChannels = func.loadByCategoryChannels();
+      categoryChannels =
+          func.loadByCategoryChannels(categoryId: globals.categories[index].id);
+      initialScrollChannel = categoryChannels
+          .indexWhere((c) => c.name == globals.currentChannel.name);
+      if (initialScrollChannel == -1) {
+        initialScrollChannel = 0;
+      }
+    });
+    print(globals.itemScrollController?.isAttached);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      globals.itemScrollController?.jumpTo(index: initialScrollChannel);
     });
   }
 
   @override
   void initState() {
+    globals.currentTempCategoryId = globals.currentCategoryId;
     categoryChannels = func.loadByCategoryChannels();
+    globals.itemScrollController = ItemScrollController();
     super.initState();
+  }
+
+  void reseting() {
+    globals.currentTempCategoryId = globals.currentCategoryId;
+  }
+
+  @override
+  void dispose() {
+    reseting();
+
+    globals.itemScrollController = ItemScrollController();
+    super.dispose();
   }
 
   @override
@@ -35,40 +62,10 @@ class _HomePageState extends State<HomePage> {
     // var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return WillPopScope(
       onWillPop: () async {
-        return (await showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: new Text('Are you sure?'),
-                content: new Text('Do you want to exit an App'),
-                actions: <Widget>[
-                  Shortcuts(
-                    shortcuts: {
-                      SingleActivator(LogicalKeyboardKey.select):
-                          const ActivateIntent(),
-                      SingleActivator(LogicalKeyboardKey.enter):
-                          const ActivateIntent(),
-                    },
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: new Text('No'),
-                    ),
-                  ),
-                  Shortcuts(
-                    shortcuts: {
-                      SingleActivator(LogicalKeyboardKey.select):
-                          const ActivateIntent(),
-                      SingleActivator(LogicalKeyboardKey.enter):
-                          const ActivateIntent(),
-                    },
-                    child: TextButton(
-                      onPressed: () => SystemNavigator.pop(),
-                      child: new Text('Yes'),
-                    ),
-                  ),
-                ],
-              ),
-            )) ??
-            false;
+        return confirmation(
+            context: context,
+            title: 'Are you sure?',
+            body: 'Do you want to exit an App');
       },
       child: SafeArea(
         child: OrientationBuilder(
@@ -80,12 +77,14 @@ class _HomePageState extends State<HomePage> {
                 return HomePageLandScape(
                   channels: categoryChannels,
                   loadCategory: loadCategory,
+                  scrollPosition: initialScrollChannel,
                 );
               case Orientation.portrait:
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
                 return HomePagePortrait(
                   channels: categoryChannels,
                   loadCategory: loadCategory,
+                  scrollPosition: initialScrollChannel,
                 );
             }
           },

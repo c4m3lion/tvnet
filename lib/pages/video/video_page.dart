@@ -3,13 +3,14 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tvnet/components/build_epg.dart';
+import 'package:tvnet/components/confirmation_component.dart';
 import 'package:tvnet/components/favorite_button.dart';
+import 'package:tvnet/pages/video/video_components/info_%20overlay.dart';
 import 'package:tvnet/pages/video/video_components/number_overlay.dart';
 import 'package:tvnet/services/my_functions.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../classes/Channel.dart';
-import '../../components/build_aspect_ratio.dart';
 import '../../services/my_globals.dart' as globals;
 
 class VideoPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _VideoPageState extends State<VideoPage> {
 
   bool isLoading = false;
   bool isControl = false;
+  bool isFirstTime = true;
 
   int currentNumber = 0;
 
@@ -107,6 +109,9 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     loadChannel();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isFirstTime = false;
+    });
     super.initState();
   }
 
@@ -129,7 +134,10 @@ class _VideoPageState extends State<VideoPage> {
           await Future.delayed(Duration(seconds: 1));
           FocusScope.of(context).requestFocus(_videoFocus);
         } else {
-          Navigator.pushReplacementNamed(context, "/home");
+          return confirmation(
+              context: context,
+              title: 'Are you sure?',
+              body: 'Do you want to exit an App');
         }
         return false;
       },
@@ -139,9 +147,7 @@ class _VideoPageState extends State<VideoPage> {
           if (event.runtimeType.toString() == 'RawKeyDownEvent') {
             if (event.logicalKey == LogicalKeyboardKey.info ||
                 event.logicalKey == LogicalKeyboardKey.keyI) {
-              setState(() {
-                isControl = !isControl;
-              });
+              openInfoPanel();
               return KeyEventResult.handled;
             }
           }
@@ -151,7 +157,8 @@ class _VideoPageState extends State<VideoPage> {
           }
           if ((event.logicalKey == LogicalKeyboardKey.select ||
                   event.logicalKey == LogicalKeyboardKey.enter) &&
-              !isControl) {
+              !isFirstTime &&
+              event.runtimeType.toString() == 'RawKeyDownEvent') {
             Navigator.pushReplacementNamed(context, "/home");
             return KeyEventResult.handled;
           }
@@ -260,10 +267,11 @@ class _VideoPageState extends State<VideoPage> {
                         IconButton(
                           padding: EdgeInsets.all(16),
                           onPressed: () => {
-                            loadAspectRatios(
-                              context: context,
-                              onSelected: loadChewie,
-                            ),
+                            openInfoPanel(),
+                            // loadAspectRatios(
+                            //   context: context,
+                            //   onSelected: loadChewie,
+                            // ),
                           },
                           icon: Icon(Icons.more_vert),
                         ),
@@ -353,6 +361,19 @@ class _VideoPageState extends State<VideoPage> {
                 },
                 child: Container(),
               ),
+      ),
+    );
+  }
+
+  void openInfoPanel() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        backgroundColor: Colors.transparent, //this right here
+        child: InfoOverlay(
+          currentChannel: globals.currentChannel,
+          onSelected: loadChewie,
+        ),
       ),
     );
   }

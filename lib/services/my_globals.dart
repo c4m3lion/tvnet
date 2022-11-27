@@ -2,6 +2,7 @@ library globals;
 
 import 'dart:convert';
 
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tvnet/services/my_functions.dart';
 
@@ -29,6 +30,10 @@ int currentActiveEpgId = 0;
 
 int selectedPage = 0;
 
+int currentTempCategoryId = 0;
+
+ItemScrollController itemScrollController = ItemScrollController();
+
 void setCurrentChannelId(Channel id) {
   epgs.clear();
   loadEpgs(id);
@@ -39,6 +44,10 @@ void setCurrentChannelId(Channel id) {
 void setCurrentCategoryId(int id) {
   currentCategoryId = id;
   localStorage.setString("currentCategoryId", categories[id].id);
+}
+
+void setCurrentTempCategoryId(int id) {
+  currentTempCategoryId = id;
 }
 
 void setAspectRatio(String aspect) {

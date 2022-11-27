@@ -26,7 +26,7 @@ Widget buildCategories(
             loadCategory(index);
             if (willPop) Navigator.pop(context);
           },
-          selected: index == globals.currentCategoryId,
+          selected: index == globals.currentTempCategoryId,
           title: Text(
             globals.categories[index].name.tr(),
           ),
