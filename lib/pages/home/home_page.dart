@@ -5,7 +5,6 @@ import 'package:tvnet/components/confirmation_component.dart';
 import 'package:tvnet/pages/home/home_page_landscape.dart';
 import 'package:tvnet/pages/home/home_page_portrait.dart';
 
-import '../../classes/Channel.dart';
 import '../../services/my_functions.dart' as func;
 import '../../services/my_globals.dart' as globals;
 
@@ -17,15 +16,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<Channel> categoryChannels;
   int initialScrollChannel = 0;
 
   void loadCategory(int index) {
     globals.setCurrentTempCategoryId(index);
     setState(() {
-      categoryChannels =
+      globals.categoryChannels =
           func.loadByCategoryChannels(categoryId: globals.categories[index].id);
-      initialScrollChannel = categoryChannels
+      initialScrollChannel = globals.categoryChannels
           .indexWhere((c) => c.name == globals.currentChannel.name);
       if (initialScrollChannel == -1) {
         initialScrollChannel = 0;
@@ -40,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     globals.currentTempCategoryId = globals.currentCategoryId;
-    categoryChannels = func.loadByCategoryChannels();
+    globals.categoryChannels = func.loadByCategoryChannels();
     globals.itemScrollController = ItemScrollController();
     super.initState();
   }
@@ -75,14 +73,14 @@ class _HomePageState extends State<HomePage> {
                 SystemChrome.setEnabledSystemUIMode(
                     SystemUiMode.immersiveSticky);
                 return HomePageLandScape(
-                  channels: categoryChannels,
+                  channels: globals.categoryChannels,
                   loadCategory: loadCategory,
                   scrollPosition: initialScrollChannel,
                 );
               case Orientation.portrait:
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
                 return HomePagePortrait(
-                  channels: categoryChannels,
+                  channels: globals.categoryChannels,
                   loadCategory: loadCategory,
                   scrollPosition: initialScrollChannel,
                 );

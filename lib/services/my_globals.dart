@@ -12,6 +12,7 @@ import '../classes/Epg.dart';
 
 List<Channel> channels = List.empty(growable: true);
 List<Category> categories = List.empty(growable: true);
+List<Channel> categoryChannels = List.empty(growable: true);
 List<Epg> epgs = List.empty(growable: true);
 Map urls = {};
 
@@ -46,6 +47,30 @@ void setCurrentCategoryId(int id) {
   localStorage.setString("currentCategoryId", categories[id].id);
 }
 
+void setNextCategoryId() {
+  if (categories[currentCategoryId].id != "favorites") {
+    currentCategoryId++;
+  }
+  if (currentCategoryId >= categories.length) {
+    currentCategoryId = 0;
+  }
+  setCurrentTempCategoryId(currentCategoryId);
+  localStorage.setString("currentCategoryId", categories[currentCategoryId].id);
+  categoryChannels = loadByCategoryChannels();
+}
+
+void setPreviousCategoryId() {
+  if (categories[currentCategoryId].id != "favorites") {
+    currentCategoryId--;
+  }
+  if (currentCategoryId < 0) {
+    currentCategoryId = categories.length - 1;
+  }
+  setCurrentTempCategoryId(currentCategoryId);
+  localStorage.setString("currentCategoryId", categories[currentCategoryId].id);
+  categoryChannels = loadByCategoryChannels();
+}
+
 void setCurrentTempCategoryId(int id) {
   currentTempCategoryId = id;
 }
@@ -56,21 +81,23 @@ void setAspectRatio(String aspect) {
 }
 
 Channel loadNextChannel() {
-  int indx = channels.indexOf(currentChannel);
+  int indx = categoryChannels.indexOf(currentChannel);
   indx++;
-  if (indx >= channels.length) {
+  if (indx >= categoryChannels.length) {
+    setNextCategoryId();
     indx = 0;
   }
-  return channels.elementAt(indx);
+  return categoryChannels.elementAt(indx);
 }
 
 Channel loadPreviousChannel() {
-  int indx = channels.indexOf(currentChannel);
+  int indx = categoryChannels.indexOf(currentChannel);
   indx--;
   if (indx < 0) {
-    indx = channels.length - 1;
+    setPreviousCategoryId();
+    indx = categoryChannels.length - 1;
   }
-  return channels.elementAt(indx);
+  return categoryChannels.elementAt(indx);
 }
 
 Channel findChannelByLcn(int lcn) {

@@ -41,6 +41,8 @@ class _VideoPageState extends State<VideoPage> {
   Future<void> initVideo(String url) async {
     videoPlayerController?.dispose();
     isLoading = true;
+    globals.categoryChannels = loadByCategoryChannels(
+        categoryId: globals.categories[globals.currentCategoryId].id);
 
     videoPlayerController = VideoPlayerController.network(
       url,
@@ -146,7 +148,8 @@ class _VideoPageState extends State<VideoPage> {
         onKey: (node, event) {
           if (event.runtimeType.toString() == 'RawKeyDownEvent') {
             if (event.logicalKey == LogicalKeyboardKey.info ||
-                event.logicalKey == LogicalKeyboardKey.keyI) {
+                event.logicalKey == LogicalKeyboardKey.keyI ||
+                event.logicalKey == LogicalKeyboardKey.contextMenu) {
               openInfoPanel();
               return KeyEventResult.handled;
             }
@@ -318,7 +321,9 @@ class _VideoPageState extends State<VideoPage> {
                                       ),
                                     ),
                                     title: Text(globals.currentChannel.name),
-                                    subtitle: globals.epgs.isNotEmpty
+                                    subtitle: globals.epgs.isNotEmpty &&
+                                            globals.currentActiveEpgId <
+                                                globals.epgs.length
                                         ? Text(globals
                                             .epgs[globals.currentActiveEpgId]
                                             .title)
