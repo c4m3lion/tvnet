@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class VideoPage extends StatefulWidget {
 class _VideoPageState extends State<VideoPage> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
+  late RestartableTimer t;
 
   bool isLoading = false;
   bool isControl = false;
@@ -82,6 +84,11 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   void channelChanged(Channel channel) async {
+    setState(() {
+      isControl = true;
+    });
+    t.reset();
+
     globals.setCurrentChannelId(channel);
     await initVideo(await loadUrl(globals.currentChannel));
   }
@@ -111,6 +118,11 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     loadChannel();
+    t = RestartableTimer(const Duration(seconds: 5), () {
+      setState(() {
+        isControl = false;
+      });
+    });
     Future.delayed(const Duration(milliseconds: 500), () {
       isFirstTime = false;
     });
@@ -119,6 +131,7 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   void dispose() {
+    t.cancel();
     _videoFocus.dispose();
     chewieController?.dispose();
     videoPlayerController?.dispose();
@@ -133,6 +146,7 @@ class _VideoPageState extends State<VideoPage> {
           setState(() {
             isControl = false;
           });
+          t.cancel();
           await Future.delayed(Duration(seconds: 1));
           FocusScope.of(context).requestFocus(_videoFocus);
         } else {
@@ -244,6 +258,7 @@ class _VideoPageState extends State<VideoPage> {
             isControl = !isControl;
           },
         ),
+        isControl ? t.reset() : t.cancel()
       },
       child: Container(
         color: Colors.transparent,

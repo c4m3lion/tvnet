@@ -29,7 +29,22 @@ class _HomePageState extends State<HomePage> {
         initialScrollChannel = 0;
       }
     });
-    print(globals.itemScrollController?.isAttached);
+    print("AUYYESYYSEYSYDFASDAYSD");
+    print(initialScrollChannel);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      globals.itemScrollController?.jumpTo(index: initialScrollChannel);
+    });
+  }
+
+  void findchannel() {
+    initialScrollChannel = globals.categoryChannels
+        .indexWhere((c) => c.name == globals.currentChannel.name);
+    if (initialScrollChannel == -1) {
+      initialScrollChannel = 0;
+    }
+
+    print("AUYYESYYSEYSYDFASDAYSD");
+    print(initialScrollChannel);
     Future.delayed(const Duration(milliseconds: 500), () {
       globals.itemScrollController?.jumpTo(index: initialScrollChannel);
     });
@@ -40,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     globals.currentTempCategoryId = globals.currentCategoryId;
     globals.categoryChannels = func.loadByCategoryChannels();
     globals.itemScrollController = ItemScrollController();
+    findchannel();
     super.initState();
   }
 
