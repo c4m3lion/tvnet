@@ -6,10 +6,12 @@ import 'package:tvnet/pages/login/login_page.dart';
 import 'package:tvnet/pages/video/video_page.dart';
 import 'package:tvnet/services/color_service.dart';
 import 'package:tvnet/translations/codegen_loader.g.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  Wakelock.enable();
   runApp(EasyLocalization(
       supportedLocales: const [
         Locale('en'),

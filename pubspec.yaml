@@ -47,6 +47,7 @@ dependencies:
   intl: ^0.17.0
   easy_localization: ^3.0.1
   country_icons: ^2.0.2
+  wakelock: ^0.6.2
 
 dev_dependencies:
   flutter_test:
