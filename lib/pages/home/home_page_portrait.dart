@@ -71,6 +71,7 @@ class _HomePagePortraitState extends State<HomePagePortrait> {
         return buildChannels(
           refreshPage: refreshPage,
           channels: widget.channels,
+          scrollPosition: widget.scrollPosition,
         );
       case 1:
         return SettingPage();
@@ -78,6 +79,7 @@ class _HomePagePortraitState extends State<HomePagePortrait> {
         return buildChannels(
           refreshPage: refreshPage,
           channels: widget.channels,
+          scrollPosition: widget.scrollPosition,
         );
     }
   }

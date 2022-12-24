@@ -26,9 +26,11 @@ class _VideoPageState extends State<VideoPage> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
   late RestartableTimer t;
+  late RestartableTimer t_infotab;
 
   bool isLoading = false;
   bool isControl = false;
+  bool isInfoTab = false;
   bool isFirstTime = true;
 
   int currentNumber = 0;
@@ -85,9 +87,9 @@ class _VideoPageState extends State<VideoPage> {
 
   void channelChanged(Channel channel) async {
     setState(() {
-      isControl = true;
+      isInfoTab = true;
     });
-    t.reset();
+    t_infotab.reset();
 
     globals.setCurrentChannelId(channel);
     await initVideo(await loadUrl(globals.currentChannel));
@@ -118,6 +120,11 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     loadChannel();
+    t_infotab = RestartableTimer(const Duration(seconds: 5), () {
+      setState(() {
+        isInfoTab = false;
+      });
+    });
     t = RestartableTimer(const Duration(seconds: 5), () {
       setState(() {
         isControl = false;
@@ -132,6 +139,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void dispose() {
     t.cancel();
+    t_infotab.cancel();
     _videoFocus.dispose();
     chewieController?.dispose();
     videoPlayerController?.dispose();
@@ -185,8 +193,10 @@ class _VideoPageState extends State<VideoPage> {
           child: Scaffold(
             body: OrientationBuilder(
               builder: (context, orientation) {
+                SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.immersiveSticky);
                 if (orientation == Orientation.portrait) {
-                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
@@ -218,8 +228,8 @@ class _VideoPageState extends State<VideoPage> {
                     ],
                   );
                 }
-                SystemChrome.setEnabledSystemUIMode(
-                    SystemUiMode.immersiveSticky);
+                // SystemChrome.setEnabledSystemUIMode(
+                //     SystemUiMode.immersiveSticky);
                 return SizedBox(width: double.infinity, child: bildMainFrame());
               },
             ),
@@ -379,8 +389,61 @@ class _VideoPageState extends State<VideoPage> {
                   }
                   return KeyEventResult.ignored;
                 },
-                child: Container(),
+                child: isInfoTab
+                    ? Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: makeTempInfoTab(),
+                        ),
+                      )
+                    : Container(),
               ),
+      ),
+    );
+  }
+
+  Widget makeTempInfoTab() {
+    return Expanded(
+      flex: 1,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Card(
+              child: ListTile(
+                leading: SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(globals.currentChannel.lcn.toString()),
+                      SizedBox(
+                        width: 60,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: CachedNetworkImage(
+                            imageUrl: globals.currentChannel.icon,
+                            placeholder: (context, url) => Icon(Icons.image),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.broken_image),
+                            width: 60,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                title: Text(globals.currentChannel.name),
+                subtitle: globals.epgs.isNotEmpty &&
+                        globals.currentActiveEpgId < globals.epgs.length
+                    ? Text(globals.epgs[globals.currentActiveEpgId].title)
+                    : null,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
