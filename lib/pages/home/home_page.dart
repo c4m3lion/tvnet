@@ -32,7 +32,10 @@ class _HomePageState extends State<HomePage> {
     print("AUYYESYYSEYSYDFASDAYSD");
     print(initialScrollChannel);
     Future.delayed(const Duration(milliseconds: 500), () {
-      globals.itemScrollController?.jumpTo(index: initialScrollChannel);
+      globals.itemScrollController.scrollTo(
+          index: initialScrollChannel,
+          duration: Duration(seconds: 1),
+          curve: Curves.easeInOutCubic);
     });
   }
 
@@ -42,11 +45,18 @@ class _HomePageState extends State<HomePage> {
     if (initialScrollChannel == -1) {
       initialScrollChannel = 0;
     }
-
-    print("AUYYESYYSEYSYDFASDAYSD");
-    print(initialScrollChannel);
     Future.delayed(const Duration(milliseconds: 500), () {
-      globals.itemScrollController?.jumpTo(index: initialScrollChannel);
+      globals.itemScrollController
+          .scrollTo(
+              index: initialScrollChannel,
+              duration: Duration(seconds: 1),
+              curve: Curves.easeInOutCubic)
+          .then((value) => {
+                globals.itemScrollController.scrollTo(
+                    index: initialScrollChannel,
+                    duration: Duration(seconds: 1),
+                    curve: Curves.easeInOutCubic),
+              });
     });
   }
 
@@ -94,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                   scrollPosition: initialScrollChannel,
                 );
               case Orientation.portrait:
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
                 return HomePagePortrait(
                   channels: globals.categoryChannels,
                   loadCategory: loadCategory,

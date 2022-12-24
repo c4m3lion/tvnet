@@ -35,6 +35,8 @@ int currentTempCategoryId = 0;
 
 ItemScrollController itemScrollController = ItemScrollController();
 
+int initialScrollChannel = 0;
+
 void setCurrentChannelId(Channel id) {
   epgs.clear();
   loadEpgs(id);

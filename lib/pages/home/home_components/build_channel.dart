@@ -13,6 +13,7 @@ Widget buildChannels({
   required final Function() refreshPage,
   required List<Channel> channels,
   final Function(Channel channel)? selectChannel,
+  required int scrollPosition,
 }) {
   return ScrollablePositionedList.builder(
     shrinkWrap: true,

@@ -97,6 +97,7 @@ class _HomePageLandScapeState extends State<HomePageLandScape>
               refreshPage: refreshPage,
               channels: widget.channels,
               selectChannel: selectChannel,
+              scrollPosition: widget.scrollPosition,
             ),
           ),
         ),
